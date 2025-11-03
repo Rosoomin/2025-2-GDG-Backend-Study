@@ -14,7 +14,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
-    //@Transactional
+    @Transactional
     public Long createMember(MemberCreateRequest request){
         Member existingMember = memberRepository.findByLoginId(request.getLoginId());
         if (existingMember != null){
@@ -33,7 +33,7 @@ public class MemberService {
         return member.getId();
     }
 
-    //@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<Member> getAllMembers(){
         return memberRepository.findAll(); //모든멤버가져오기
     }
@@ -49,7 +49,7 @@ public class MemberService {
         return member;
     }
 
-    //@Transactional
+    @Transactional
     public void updateMember(Long id, MemberUpdateRequest request){
         Member member = memberRepository.findById(id);
 
@@ -60,9 +60,9 @@ public class MemberService {
         member.updateInfo(request.getPassword(), request.getPhoneNumber(), request.getAddress());
     }
 
-    //@Transactional
+    @Transactional
     public void deleteMember(Long id){
-        Memeber member = memberRepository.findById(id);
+        Member member = memberRepository.findById(id);
 
         if(member == null){
             throw new RuntimeException("회원을 찾을 수 없습니다.");
