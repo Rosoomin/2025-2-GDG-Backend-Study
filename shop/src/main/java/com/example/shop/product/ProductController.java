@@ -1,5 +1,6 @@
 package com.example.shop.product;
 
+import com.example.shop.product.Product;
 import com.example.shop.product.dto.ProductCreateRequest;
 import com.example.shop.product.dto.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Object>> getAllProducts() {
-        List<Object> products = productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        List<Product> products = productService.getAllProducts();
         return ResponseEntity.ok(products);
     }
 

@@ -1,11 +1,15 @@
 package com.example.shop.order;
 
+import com.example.shop.member.Member;
+import com.example.shop.member.MemberRepository;
 import com.example.shop.order.dto.OrderCreateRequest;
+import com.example.shop.product.Product;
+import com.example.shop.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,56 +19,45 @@ public class OrderService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
 
-    //@Transactional
+    // 주문 생성
+    @Transactional
     public Long createOrder(OrderCreateRequest request) {
 
         Member member = memberRepository.findById(request.getMemberId());
         if (member == null) {
-            throw new RuntimeException("주문하려는 회원을 찾을 수 없습니다.");
+            throw new RuntimeException("회원을 찾을 수 없습니다.");
         }
 
-        List<OrderItem> orderItems = request.getItems().stream()
-                .map(itemRequest -> {
-                    Product product = productRepository.findById(itemRequest.getProductId());
+        // 총 주문 금액 = Σ(상품가격 * 수량)
+        int totalPrice = request.getItems().stream()
+                .mapToInt(item -> {
+                    Product product = productRepository.findById(item.getProductId());
                     if (product == null) {
                         throw new RuntimeException("주문하려는 상품을 찾을 수 없습니다.");
                     }
-
-                    return new OrderItem(product, itemRequest.getCount());
+                    return product.getPrice() * item.getCount();
                 })
-                .collect(Collectors.toList());
+                .sum();
 
-        Order order = new Order(member, orderItems);
-
+        Order order = new Order(member, totalPrice);
         orderRepository.save(order);
 
         return order.getId();
     }
 
-    //@Transactional(readOnly = true)
+    // 주문 내역 전체 조회
+    @Transactional(readOnly = true)
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
-    //@Transactional(readOnly = true)
-    public Order getOrderById(Long id) {
-        Order order = orderRepository.findById(id);
-
+    // 주문 취소
+    @Transactional
+    public void cancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId);
         if (order == null) {
             throw new RuntimeException("주문을 찾을 수 없습니다.");
         }
-
-        return order;
-    }
-
-    //@Transactional
-    public void cancelOrder(Long id) {
-        Order order = orderRepository.findById(id);
-
-        if (order == null) {
-            throw new RuntimeException("취소하려는 주문을 찾을 수 없습니다.");
-        }
-
-        orderRepository.cancel(id);
+        order.cancel();   // 상태만 CANCELLED 로 변경
     }
 }

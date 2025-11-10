@@ -15,27 +15,25 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    // 상품 주문
     @PostMapping
     public ResponseEntity<Void> createOrder(@RequestBody OrderCreateRequest request) {
         Long orderId = orderService.createOrder(request);
         return ResponseEntity.created(URI.create("/orders/" + orderId)).build();
     }
 
+    // 주문 내역 조회
     @GetMapping
-    public ResponseEntity<List<Object>> getAllOrders() {
-        List<Object> orders = orderService.getAllOrders();
+    public ResponseEntity<List<Order>> getAllOrders() {
+        List<Order> orders = orderService.getAllOrders();
         return ResponseEntity.ok(orders);
     }
 
-    @GetMapping("/{orderId}")
-    public ResponseEntity<Object> getOrder(@PathVariable Long orderId) {
-        Object order = orderService.getOrderById(orderId);
-        return ResponseEntity.ok(order);
-    }
-
-    @DeleteMapping("/{orderId}")
+    // 주문 취소
+    @PostMapping("/{orderId}/cancel")
     public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
         orderService.cancelOrder(orderId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
+

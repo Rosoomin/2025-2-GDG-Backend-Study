@@ -4,6 +4,7 @@ import com.example.shop.product.dto.ProductCreateRequest;
 import com.example.shop.product.dto.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    //@Transactional
+    @Transactional
     public Long createProduct(ProductCreateRequest request) {
         Product existingProduct = productRepository.findByName(request.getName());
         if (existingProduct != null) {
@@ -31,12 +32,12 @@ public class ProductService {
         return product.getId();
     }
 
-    //@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    //@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Product getProductById(Long id) {
         Product product = productRepository.findById(id);
 
@@ -47,7 +48,7 @@ public class ProductService {
         return product;
     }
 
-    //@Transactional
+    @Transactional
     public void updateProduct(Long id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id);
 
@@ -58,7 +59,7 @@ public class ProductService {
         product.updateInfo(request.getName(), request.getPrice(), request.getStockQuantity());
     }
 
-    //@Transactional
+    @Transactional
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id);
 
