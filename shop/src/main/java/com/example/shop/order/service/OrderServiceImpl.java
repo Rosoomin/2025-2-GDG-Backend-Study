@@ -1,9 +1,12 @@
-package com.example.shop.order;
+package com.example.shop.order.service;
 
-import com.example.shop.member.Member;
+import com.example.shop.member.entity.Member;
+import com.example.shop.member.repository.MemberRepository;
+import com.example.shop.order.entity.Order;
+import com.example.shop.order.repository.OrderRepository;
 import com.example.shop.order.dto.OrderCreateRequest;
-import com.example.shop.product.Product;
-import com.example.shop.product.ProductRepository;
+import com.example.shop.product.entity.Product;
+import com.example.shop.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrderService {
+public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final MemberRepository memberRepository;
@@ -20,6 +23,7 @@ public class OrderService {
 
     // 주문 생성
     @Transactional
+    @Override
     public Long createOrder(OrderCreateRequest request) {
 
         Member member = memberRepository.findById(request.getMemberId());
@@ -46,12 +50,14 @@ public class OrderService {
 
     // 주문 내역 전체 조회
     @Transactional(readOnly = true)
+    @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
 
     // 주문 취소
     @Transactional
+    @Override
     public void cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId);
         if (order == null) {

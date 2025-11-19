@@ -1,53 +1,45 @@
 package com.example.shop.member.repository;
 
-import com.example.shop.member.Member;
-import org.springframework.stereotype.Repository;
+import com.example.shop.member.entity.Member;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-@Repository
-public interface MemoryMemberRepository {
 
-    public class MemoryMemberRepository implements MemberRepository {
+public class MemoryMemberRepository implements MemberRepository {
 
-        private final Map<Long, Member> store = new HashMap<>();
-        private long sequence = 0L;
+    private final Map<Long, Member> store = new HashMap<>();
+    private long sequence = 0L;
 
-        @Override
-        public Member findById(Long id) {
-            return store.get(id);
+    @Override
+    public Member findById(Long id) {
+        return store.get(id);
+    }
+
+    @Override
+    public List<Member> findAll() {
+        return new ArrayList<>(store.values());
+    }
+
+    @Override
+    public Member findByLoginId(String loginId) {
+        return store.values().stream()
+                .filter(member -> member.getLoginId().equals(loginId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public void save(Member member) {
+        if (member.getId() == null) {
+            sequence++;
+            member.setId(sequence);
         }
+        store.put(member.getId(), member);
+    }
 
-        @Override
-        public List<Member> findAll() {
-            return new ArrayList<>(store.values());
-        }
-
-        @Override
-        public Member findByLoginId(String loginId) {
-            for (Member member : store.values()) {
-                if (member.getLoginId().equals(loginId)) {
-                    return member;
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public void save(Member member) {
-            if (member.getId() == null) {
-                sequence++;
-                member.setId(sequence);
-            }
-            store.put(member.getId(), member);
-        }
-
-        @Override
-        public void deleteById(Long id) {
-            store.remove(id);
-        }
+    @Override
+    public void deleteById(Long id) {
+        store.remove(id);
     }
 }
+

@@ -1,6 +1,7 @@
-package com.example.shop.product;
+package com.example.shop.product.controller;
 
-import com.example.shop.product.Product;
+import com.example.shop.product.entity.Product;
+import com.example.shop.product.service.ProductService;
 import com.example.shop.product.dto.ProductCreateRequest;
 import com.example.shop.product.dto.ProductUpdateRequest;
 import lombok.RequiredArgsConstructor;
