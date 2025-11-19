@@ -1,7 +1,6 @@
 package com.example.shop.order;
 
 import com.example.shop.member.Member;
-import com.example.shop.member.MemberRepository;
 import com.example.shop.order.dto.OrderCreateRequest;
 import com.example.shop.product.Product;
 import com.example.shop.product.ProductRepository;

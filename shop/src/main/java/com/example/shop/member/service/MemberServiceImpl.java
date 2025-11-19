@@ -1,21 +1,23 @@
-package com.example.shop.member;
+package com.example.shop.member.service;
 
+import com.example.shop.member.Member;
 import com.example.shop.member.dto.MemberCreateRequest;
 import com.example.shop.member.dto.MemberUpdateRequest;
+import com.example.shop.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URI;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
 
     @Transactional
+    @Override
     public Long createMember(MemberCreateRequest request){
         Member existingMember = memberRepository.findByLoginId(request.getLoginId());
         if (existingMember != null){
@@ -35,11 +37,13 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public List<Member> getAllMembers(){
         return memberRepository.findAll(); //모든멤버가져오기
     }
 
-    //@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
+    @Override
     public Member getMemberById(Long id){
         Member member = memberRepository.findById(id); // id를 통해서 레포지토리에서 레포의 멤버를 가져오는 코드?
 
@@ -51,6 +55,7 @@ public class MemberService {
     }
 
     @Transactional
+    @Override
     public void updateMember(Long id, MemberUpdateRequest request){
         Member member = memberRepository.findById(id);
 
@@ -62,6 +67,7 @@ public class MemberService {
     }
 
     @Transactional
+    @Override
     public void deleteMember(Long id){
         Member member = memberRepository.findById(id);
 
