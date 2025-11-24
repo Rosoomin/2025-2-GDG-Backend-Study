@@ -1,5 +1,8 @@
 package com.example.shop.product.service;
 
+import com.example.shop.common.exception.BadRequestException;
+import com.example.shop.common.exception.NotFoundException;
+import com.example.shop.common.message.ErrorMessage;
 import com.example.shop.product.entity.Product;
 import com.example.shop.product.repository.ProductRepository;
 import com.example.shop.product.dto.ProductCreateRequest;
@@ -21,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
     public Long createProduct(ProductCreateRequest request) {
         Product existingProduct = productRepository.findByName(request.getName());
         if (existingProduct != null) {
-            throw new RuntimeException("이미 존재하는 상품명입니다: " + request.getName());
+            throw new BadRequestException(ErrorMessage.PRODUCT_ALREADY_EXISTS);
         }
 
         Product product = new Product(
@@ -47,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id);
 
         if (product == null) {
-            throw new RuntimeException("상품을 찾을 수 없습니다.");
+            throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
         }
 
         return product;
@@ -59,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id);
 
         if (product == null) {
-            throw new RuntimeException("상품을 찾을 수 없습니다.");
+            throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
         }
 
         product.updateInfo(request.getName(), request.getPrice(), request.getStockQuantity());
@@ -71,7 +74,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(id);
 
         if (product == null) {
-            throw new RuntimeException("상품을 찾을 수 없습니다.");
+            throw new NotFoundException(ErrorMessage.PRODUCT_NOT_FOUND);
         }
 
         productRepository.deleteById(id);
